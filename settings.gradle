@@ -1,0 +1,2 @@
+include ':app', ':cardscanner'
+rootProject.name='SCCardScannerSDK_Example'
