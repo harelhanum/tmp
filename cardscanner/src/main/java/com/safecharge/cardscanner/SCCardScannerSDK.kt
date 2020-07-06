@@ -103,6 +103,9 @@ object SCCardScannerSDK {
                     scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, false)
                     scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false)
                     scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false)
+                    scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, true)
+                    scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true)
+                    scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO, true)
 
                     activity.startActivityForResult(scanIntent, SCAN_CARD_REQUEST_CODE)
                 }
