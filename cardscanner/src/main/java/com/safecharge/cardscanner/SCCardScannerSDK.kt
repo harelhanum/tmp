@@ -2,11 +2,17 @@ package com.safecharge.cardscanner
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import io.card.payment.CardIOActivity
 import io.card.payment.CreditCard
 import java.lang.ref.WeakReference
+import java.net.URI
+import java.net.URL
 
 
 object SCCardScannerSDK {
@@ -81,20 +87,26 @@ object SCCardScannerSDK {
 
         @JavascriptInterface
         fun scanCard() {
-            if (!CardIOActivity.canReadCardWithCamera()) {
-                didFail(SCCardScannerError.UNSUPPORTED_DEVICE)
-                return
+            val activity = activity.get() ?: return
+
+            webView?.post {
+                webView?.takeIf { URI(it.url).host in hostWhiteList } ?: return@post
+
+                if (!CardIOActivity.canReadCardWithCamera()) {
+                    didFail(SCCardScannerError.UNSUPPORTED_DEVICE)
+                    return@post
+                }
+
+                Handler(Looper.getMainLooper()).post {
+                    val scanIntent = Intent(activity, CardIOActivity::class.java)
+
+                    scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, false)
+                    scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false)
+                    scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false)
+
+                    activity.startActivityForResult(scanIntent, SCAN_CARD_REQUEST_CODE)
+                }
             }
-
-            val scanIntent = Intent(activity.get(), CardIOActivity::class.java)
-
-            scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, false)
-            scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false)
-            scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false)
-
-            activity.get()?.let {
-                it.startActivityForResult(scanIntent, SCAN_CARD_REQUEST_CODE)
-            } ?: didFail(SCCardScannerError.UNKNOWN)
         }
     }
 }
