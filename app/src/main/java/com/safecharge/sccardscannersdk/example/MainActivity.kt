@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
 
         button.setOnClickListener {
-            if (!edittext.text.trim().isBlank()) {
+            edittext.text.trim().toString().takeIf { it.length > 4 }?.let { url ->
                 sharedPref.edit().putString(LAST_URL_KEY, url).apply()
 
                 val intent = Intent(this, WebViewActivity::class.java)
