@@ -57,10 +57,10 @@ object SCCardScannerSDK {
                     window.postMessage({
                     source: 'scanCard',
                     status: 'OK',
-                    cardHolderName: ${cardInfo.cardholderName},
-                    cardNumber: ${cardInfo.cardNumber},
-                    expDate: ${expiryDate},
-                    cvv: ${cardInfo.cvv}
+                    cardHolderName: '${cardInfo.cardholderName ?: ""}',
+                    cardNumber: '${cardInfo.cardNumber ?: ""}',
+                    expDate: '${expiryDate}',
+                    cvv: '${cardInfo.cvv ?: ""}'
                     },"*");
                     """
                     webView?.evaluateJavascript(js, null)
@@ -100,7 +100,8 @@ object SCCardScannerSDK {
                 Handler(Looper.getMainLooper()).post {
                     val scanIntent = Intent(activity, CardIOActivity::class.java)
 
-                    scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, false)
+                    scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true)
+                    scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_EXPIRY, true)
                     scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false)
                     scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false)
                     scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, true)
